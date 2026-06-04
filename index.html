@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#050812" />
-    <title>KatzenSMP Client Shop</title>
+    <title>KatzenSMP Client</title>
     <style>
       :root {
         color-scheme: dark;
@@ -172,8 +172,7 @@
       }
 
       .status-row,
-      .product-row,
-      .request-row {
+      .product-row {
         display: flex;
         justify-content: space-between;
         gap: 14px;
@@ -182,8 +181,7 @@
       }
 
       .status-row:last-child,
-      .product-row:last-child,
-      .request-row:last-child {
+      .product-row:last-child {
         border-bottom: 0;
       }
 
@@ -240,8 +238,7 @@
         gap: 14px;
       }
 
-      .card,
-      form {
+      .card {
         border: 1px solid var(--line);
         border-radius: 8px;
         background: rgba(12, 18, 34, 0.78);
@@ -276,70 +273,6 @@
         color: var(--lime);
       }
 
-      .request-layout {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) minmax(300px, 0.85fr);
-        gap: 18px;
-      }
-
-      form {
-        display: grid;
-        gap: 14px;
-        padding: 18px;
-      }
-
-      .field {
-        display: grid;
-        gap: 7px;
-      }
-
-      label {
-        color: var(--muted);
-        font-size: 13px;
-      }
-
-      input,
-      select,
-      textarea {
-        width: 100%;
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background: rgba(5, 8, 18, 0.72);
-        color: var(--text);
-        outline: none;
-        padding: 12px;
-      }
-
-      textarea {
-        min-height: 116px;
-        resize: vertical;
-      }
-
-      input:focus,
-      select:focus,
-      textarea:focus {
-        border-color: rgba(38, 244, 255, 0.72);
-        box-shadow: 0 0 0 3px rgba(38, 244, 255, 0.12);
-      }
-
-      .form-row {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 12px;
-      }
-
-      .submit {
-        cursor: pointer;
-        border-color: rgba(167, 255, 79, 0.55);
-        background: linear-gradient(135deg, rgba(167, 255, 79, 0.24), rgba(38, 244, 255, 0.16));
-        color: var(--text);
-        font-weight: 800;
-      }
-
-      .requests {
-        padding: 18px;
-      }
-
       .empty {
         color: var(--muted);
         line-height: 1.6;
@@ -364,17 +297,12 @@
         }
 
         .hero,
-        .request-layout,
         .grid {
           grid-template-columns: 1fr;
         }
 
         .hero {
           min-height: auto;
-        }
-
-        .form-row {
-          grid-template-columns: 1fr;
         }
       }
     </style>
@@ -387,8 +315,7 @@
           <span>KatzenSMP Client</span>
         </a>
         <nav aria-label="Hauptnavigation">
-          <a href="#shop">Shop</a>
-          <a href="#anfrage">Anfrage</a>
+          <a href="#info">Info</a>
           <a href="#status">Status</a>
         </nav>
       </div>
@@ -397,16 +324,15 @@
     <main id="top" class="shell">
       <section class="hero">
         <div>
-          <span class="pill">Client Shop Anfrage</span>
+          <span class="pill">Client Website</span>
           <h1>KatzenSMP Client</h1>
           <p>
-            Eine schnelle Web-Seite fuer deinen KatzenSMP Client mit
-            Hosting, Anfrageformular und sichtbarer Anfrage-Liste.
+            Eine schnelle Web-Seite fuer deinen KatzenSMP Client.
+            Ohne Shop, ohne Pakete und ohne Anfrageformular.
             Bereit fuer GitHub Pages, Netlify oder normalen Webspace.
           </p>
           <div class="actions">
-            <a class="button primary" href="#anfrage">Anfrage senden</a>
-            <a class="button" href="#shop">Web Pakete ansehen</a>
+            <a class="button primary" href="#info">Mehr ansehen</a>
           </div>
         </div>
 
@@ -421,8 +347,8 @@
             </div>
             <div class="status-row">
               <div>
-                <div class="label">Shop</div>
-                <div class="value">Anfragen offen</div>
+                <div class="label">Website</div>
+                <div class="value">Info-Seite</div>
               </div>
               <span class="pill">24/7</span>
             </div>
@@ -437,167 +363,30 @@
         </aside>
       </section>
 
-      <section id="shop">
+      <section id="info">
         <div class="section-title">
-          <h2>Web Pakete</h2>
-          <p>Alle Pakete beziehen sich auf Website, Hosting und Design. Keine Spielvorteile, kein Pay2Win.</p>
+          <h2>Info</h2>
+          <p>Der KatzenSMP Client ist als faire Client-Webseite dargestellt. Es gibt keine Shop-Pakete, keine Preise und keine Anfragefelder.</p>
         </div>
         <div class="grid">
           <article class="card">
-            <h3>Web Basic</h3>
-            <div class="price">4,99 EUR</div>
-            <ul class="features">
-              <li>Startseite fuer den Client</li>
-              <li>Mobile Ansicht</li>
-            </ul>
+            <h3>Fair</h3>
+            <p class="empty">Keine gekauften Spielvorteile und keine Pay2Win-Inhalte.</p>
           </article>
           <article class="card">
-            <h3>Web Plus</h3>
-            <div class="price">9,99 EUR</div>
-            <ul class="features">
-              <li>Shop-Anfrage Bereich</li>
-              <li>E-Mail Anfrage Button</li>
-              <li>GitHub Pages Setup</li>
-            </ul>
+            <h3>Web</h3>
+            <p class="empty">Eine einfache Website, die deinen Client sauber praesentiert.</p>
           </article>
           <article class="card">
-            <h3>Web Pro</h3>
-            <div class="price">24,99 EUR</div>
-            <ul class="features">
-              <li>Custom Web Design</li>
-              <li>Extra Seiten auf Wunsch</li>
-              <li>Hosting Hilfe</li>
-            </ul>
+            <h3>Online</h3>
+            <p class="empty">Geeignet fuer GitHub Pages und andere statische Webhoster.</p>
           </article>
-        </div>
-      </section>
-
-      <section id="anfrage">
-        <div class="section-title">
-          <h2>Shop Anfrage</h2>
-          <p>Zum Testen werden Anfragen in diesem Browser gespeichert. Fuer echtes Hosting kannst du spaeter Formspree, Netlify Forms oder ein eigenes Backend anschliessen.</p>
-        </div>
-        <div class="request-layout">
-          <form id="requestForm">
-            <div class="form-row">
-              <div class="field">
-                <label for="name">Name</label>
-                <input id="name" name="name" autocomplete="name" required />
-              </div>
-              <div class="field">
-                <label for="contact">Kontakt</label>
-                <input id="contact" name="contact" placeholder="Discord, E-Mail oder WhatsApp" required />
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="field">
-                <label for="package">Paket</label>
-                <select id="package" name="package">
-                  <option>Web Basic</option>
-                  <option selected>Web Plus</option>
-                  <option>Web Pro</option>
-                </select>
-              </div>
-              <div class="field">
-                <label for="payment">Zahlung</label>
-                <select id="payment" name="payment">
-                  <option>PayPal</option>
-                  <option>Paysafecard</option>
-                  <option>Crypto</option>
-                  <option>Andere</option>
-                </select>
-              </div>
-            </div>
-            <div class="field">
-              <label for="message">Nachricht</label>
-              <textarea id="message" name="message" placeholder="Was brauchst du genau?"></textarea>
-            </div>
-            <button class="button submit" type="submit">Anfrage speichern</button>
-            <a id="mailLink" class="button" href="mailto:katzensmp@gmail.com">Als E-Mail senden</a>
-          </form>
-
-          <aside class="console requests">
-            <div class="label">Gespeicherte Anfragen</div>
-            <div id="requestList" class="empty">Noch keine Anfrage gespeichert.</div>
-          </aside>
         </div>
       </section>
     </main>
 
     <footer>
-      <div class="shell">KatzenSMP Client Hosting Paket - statische Website</div>
+      <div class="shell">KatzenSMP Client - statische Website</div>
     </footer>
-
-    <script>
-      const form = document.querySelector("#requestForm");
-      const list = document.querySelector("#requestList");
-      const mailLink = document.querySelector("#mailLink");
-      const storageKey = "neon-client-shop-requests";
-
-      function getRequests() {
-        return JSON.parse(localStorage.getItem(storageKey) || "[]");
-      }
-
-      function setRequests(requests) {
-        localStorage.setItem(storageKey, JSON.stringify(requests));
-      }
-
-      function renderRequests() {
-        const requests = getRequests();
-        if (!requests.length) {
-          list.className = "empty";
-          list.textContent = "Noch keine Anfrage gespeichert.";
-          return;
-        }
-
-        list.className = "";
-        list.innerHTML = requests.map((request) => `
-          <div class="request-row">
-            <div>
-              <div class="value">${escapeHtml(request.name)} - ${escapeHtml(request.package)}</div>
-              <div class="label">${escapeHtml(request.contact)} | ${escapeHtml(request.payment)}</div>
-              <div class="label">${escapeHtml(request.message || "Keine Nachricht")}</div>
-            </div>
-            <span class="pill">${escapeHtml(request.date)}</span>
-          </div>
-        `).join("");
-      }
-
-      function escapeHtml(value) {
-        return String(value).replace(/[&<>"']/g, (char) => ({
-          "&": "&amp;",
-          "<": "&lt;",
-          ">": "&gt;",
-          '"': "&quot;",
-          "'": "&#039;"
-        }[char]));
-      }
-
-      function updateMailLink() {
-        const data = new FormData(form);
-        const subject = encodeURIComponent(`KatzenSMP Client Anfrage: ${data.get("package")}`);
-        const body = encodeURIComponent(
-          `Name: ${data.get("name") || ""}\nKontakt: ${data.get("contact") || ""}\nPaket: ${data.get("package")}\nZahlung: ${data.get("payment")}\nNachricht: ${data.get("message") || ""}`
-        );
-        mailLink.href = `mailto:katzensmp@gmail.com?subject=${subject}&body=${body}`;
-      }
-
-      form.addEventListener("input", updateMailLink);
-      form.addEventListener("submit", (event) => {
-        event.preventDefault();
-        const data = Object.fromEntries(new FormData(form));
-        const requests = getRequests();
-        requests.unshift({
-          ...data,
-          date: new Date().toLocaleDateString("de-DE")
-        });
-        setRequests(requests.slice(0, 8));
-        renderRequests();
-        updateMailLink();
-      });
-
-      renderRequests();
-      updateMailLink();
-    </script>
   </body>
 </html>
