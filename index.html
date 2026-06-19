@@ -460,15 +460,10 @@
                 <label for="fantasyName">Fantasy-Name</label>
                 <input id="fantasyName" maxlength="24" placeholder="z. B. KatzenKing" />
               </div>
-              <div class="field">
-                <label for="verifyCode">Verify-Code aus E-Mail</label>
-                <input id="verifyCode" inputmode="numeric" maxlength="8" placeholder="Code eingeben" />
-              </div>
               <div class="actions">
-                <button class="button" type="button" id="sendVerifyCode">Code per E-Mail senden</button>
                 <button class="button primary" type="button" id="saveRegistration">Registrieren</button>
               </div>
-              <p id="registerMessage" class="register-message">Nach dem Google Login kannst du deinen Fantasy-Namen reservieren. Fuer echte E-Mail-Codes muss noch ein Mailserver verbunden werden.</p>
+              <p id="registerMessage" class="register-message">Nach dem Google Login kannst du deinen Fantasy-Namen speichern.</p>
             </div>
           </div>
         </div>
@@ -615,7 +610,7 @@
       const GOOGLE_CLIENT_ID = "937338779986-f9lnnv0hdt39v3cn5odud6flbpu1r66n.apps.googleusercontent.com";
       let currentGoogleProfile = null;
       const DISCORD_CLIENT_ID = "1517625849254514708";
-      const DISCORD_REDIRECT_URI = window.location.origin + window.location.pathname;
+      const DISCORD_REDIRECT_URI = "https://zcoolking.github.io/Katzen-SMP-Client/";
 
       function decodeJwtPayload(token) {
         const payload = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
@@ -639,22 +634,16 @@
         const saved = JSON.parse(localStorage.getItem("katzensmp-registration") || "null");
         if (saved && saved.email === profile.email) {
           document.getElementById("fantasyName").value = saved.fantasyName || "";
-          document.getElementById("registerMessage").textContent = `Gespeichert: ${saved.fantasyName}. E-Mail-Verifizierung ist noch nicht mit einem Mailserver verbunden.`;
+          document.getElementById("registerMessage").textContent = `Gespeichert: ${saved.fantasyName}.`;
         }
       }
 
 
       function setupRegistrationControls() {
-        const sendButton = document.getElementById("sendVerifyCode");
         const saveButton = document.getElementById("saveRegistration");
-        if (!sendButton || !saveButton) {
+        if (!saveButton) {
           return;
         }
-
-        sendButton.addEventListener("click", () => {
-          const email = currentGoogleProfile?.email || "deine Google E-Mail";
-          document.getElementById("registerMessage").textContent = `Code fuer ${email} kann erst gesendet werden, wenn ein Mailserver oder Email-Dienst angeschlossen ist.`;
-        });
 
         saveButton.addEventListener("click", () => {
           if (!currentGoogleProfile) {
@@ -672,11 +661,10 @@
             email: currentGoogleProfile.email || "",
             googleName: currentGoogleProfile.name || "",
             fantasyName,
-            emailCodeVerified: false,
             savedAt: new Date().toISOString()
           };
           localStorage.setItem("katzensmp-registration", JSON.stringify(registration));
-          document.getElementById("registerMessage").textContent = `Fantasy-Name gespeichert: ${fantasyName}. E-Mail-Code-Verifizierung wartet noch auf einen Mailserver.`;
+          document.getElementById("registerMessage").textContent = `Fantasy-Name gespeichert: ${fantasyName}.`;
         });
       }
 
@@ -742,6 +730,8 @@
         });
       }
       window.addEventListener("load", () => {
+        setupRegistrationControls();
+        setupDiscordLogin();
         if (!window.google || GOOGLE_CLIENT_ID.includes("HIER_DEINE")) {
           return;
         }
