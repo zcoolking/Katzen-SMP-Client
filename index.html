@@ -143,6 +143,42 @@
         background: rgba(38, 244, 255, 0.08);
       }
 
+      .register-form {
+        display: grid;
+        gap: 12px;
+      }
+
+      .register-form .field {
+        display: grid;
+        gap: 7px;
+      }
+
+      .register-form label {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .register-form input {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(5, 8, 18, 0.72);
+        color: var(--text);
+        outline: none;
+        padding: 12px;
+      }
+
+      .register-form input:focus {
+        border-color: rgba(38, 244, 255, 0.72);
+        box-shadow: 0 0 0 3px rgba(38, 244, 255, 0.12);
+      }
+
+      .register-message {
+        color: var(--muted);
+        line-height: 1.6;
+        margin: 0;
+      }
+
       main {
         padding: 48px 0 72px;
       }
@@ -415,6 +451,25 @@
               Google Login ist vorbereitet. Trage in der Datei deine Google Client-ID ein, dann erscheint hier der echte Login-Button.
             </div>
             <div id="profileBox" class="profile-box" hidden></div>
+            <div id="registrationBox" class="profile-box register-form" hidden>
+              <div>
+                <div class="label">Registrierung</div>
+                <div class="value">Fantasy-Name erstellen</div>
+              </div>
+              <div class="field">
+                <label for="fantasyName">Fantasy-Name</label>
+                <input id="fantasyName" maxlength="24" placeholder="z. B. KatzenKing" />
+              </div>
+              <div class="field">
+                <label for="verifyCode">Verify-Code aus E-Mail</label>
+                <input id="verifyCode" inputmode="numeric" maxlength="8" placeholder="Code eingeben" />
+              </div>
+              <div class="actions">
+                <button class="button" type="button" id="sendVerifyCode">Code per E-Mail senden</button>
+                <button class="button primary" type="button" id="saveRegistration">Registrieren</button>
+              </div>
+              <p id="registerMessage" class="register-message">Nach dem Google Login kannst du deinen Fantasy-Namen reservieren. Fuer echte E-Mail-Codes muss noch ein Mailserver verbunden werden.</p>
+            </div>
           </div>
         </div>
       </section>
@@ -548,6 +603,7 @@
     </footer>
     <script>
       const GOOGLE_CLIENT_ID = "937338779986-f9lnnv0hdt39v3cn5odud6flbpu1r66n.apps.googleusercontent.com";
+      let currentGoogleProfile = null;
 
       function decodeJwtPayload(token) {
         const payload = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
@@ -558,15 +614,59 @@
 
       function handleGoogleCredential(response) {
         const profile = decodeJwtPayload(response.credential);
+        currentGoogleProfile = profile;
         document.getElementById("loginStatus").textContent = "Angemeldet";
         document.getElementById("profileBox").hidden = false;
+        document.getElementById("registrationBox").hidden = false;
         document.getElementById("profileBox").innerHTML = `
           <div class="label">Google Konto</div>
           <div class="value">${profile.name || "Angemeldet"}</div>
           <div class="empty">${profile.email || ""}</div>
         `;
+
+        const saved = JSON.parse(localStorage.getItem("katzensmp-registration") || "null");
+        if (saved && saved.email === profile.email) {
+          document.getElementById("fantasyName").value = saved.fantasyName || "";
+          document.getElementById("registerMessage").textContent = `Gespeichert: ${saved.fantasyName}. E-Mail-Verifizierung ist noch nicht mit einem Mailserver verbunden.`;
+        }
       }
 
+
+      function setupRegistrationControls() {
+        const sendButton = document.getElementById("sendVerifyCode");
+        const saveButton = document.getElementById("saveRegistration");
+        if (!sendButton || !saveButton) {
+          return;
+        }
+
+        sendButton.addEventListener("click", () => {
+          const email = currentGoogleProfile?.email || "deine Google E-Mail";
+          document.getElementById("registerMessage").textContent = `Code fuer ${email} kann erst gesendet werden, wenn ein Mailserver oder Email-Dienst angeschlossen ist.`;
+        });
+
+        saveButton.addEventListener("click", () => {
+          if (!currentGoogleProfile) {
+            document.getElementById("registerMessage").textContent = "Bitte zuerst mit Google anmelden.";
+            return;
+          }
+
+          const fantasyName = document.getElementById("fantasyName").value.trim();
+          if (fantasyName.length < 3) {
+            document.getElementById("registerMessage").textContent = "Dein Fantasy-Name braucht mindestens 3 Zeichen.";
+            return;
+          }
+
+          const registration = {
+            email: currentGoogleProfile.email || "",
+            googleName: currentGoogleProfile.name || "",
+            fantasyName,
+            emailCodeVerified: false,
+            savedAt: new Date().toISOString()
+          };
+          localStorage.setItem("katzensmp-registration", JSON.stringify(registration));
+          document.getElementById("registerMessage").textContent = `Fantasy-Name gespeichert: ${fantasyName}. E-Mail-Code-Verifizierung wartet noch auf einen Mailserver.`;
+        });
+      }
       window.addEventListener("load", () => {
         if (!window.google || GOOGLE_CLIENT_ID.includes("HIER_DEINE")) {
           return;
