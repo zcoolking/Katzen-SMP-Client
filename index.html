@@ -526,9 +526,19 @@
               </div>
               <span class="pill">online</span>
             </div>
+            <div class="status-row">
+              <div>
+                <div class="label">Discord Login</div>
+                <div class="value" id="discordStatus">Client-ID fehlt</div>
+              </div>
+              <span class="pill">OAuth2</span>
+            </div>
+            <div id="discordProfileBox" class="profile-box" hidden></div>
             <div class="actions">
               <a class="button primary" href="https://discord.gg/vYQqRBCbXW" target="_blank" rel="noopener noreferrer">Discord oeffnen</a>
+              <button class="button primary" type="button" id="discordLoginButton">Mit Discord anmelden</button>
             </div>
+            <p id="discordLoginMessage" class="register-message">Discord Login ist vorbereitet. Trage deine Discord Client-ID ein, dann funktioniert der Button.</p>
           </div>
         </div>
       </section>
@@ -604,6 +614,8 @@
     <script>
       const GOOGLE_CLIENT_ID = "937338779986-f9lnnv0hdt39v3cn5odud6flbpu1r66n.apps.googleusercontent.com";
       let currentGoogleProfile = null;
+      const DISCORD_CLIENT_ID = "1517625849254514708";
+      const DISCORD_REDIRECT_URI = window.location.origin + window.location.pathname;
 
       function decodeJwtPayload(token) {
         const payload = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
@@ -665,6 +677,68 @@
           };
           localStorage.setItem("katzensmp-registration", JSON.stringify(registration));
           document.getElementById("registerMessage").textContent = `Fantasy-Name gespeichert: ${fantasyName}. E-Mail-Code-Verifizierung wartet noch auf einen Mailserver.`;
+        });
+      }
+
+      function setupDiscordLogin() {
+        const button = document.getElementById("discordLoginButton");
+        const status = document.getElementById("discordStatus");
+        const message = document.getElementById("discordLoginMessage");
+        const profileBox = document.getElementById("discordProfileBox");
+        if (!button || !status || !message || !profileBox) {
+          return;
+        }
+
+        const hash = new URLSearchParams(window.location.hash.slice(1));
+        const discordToken = hash.get("access_token");
+        if (discordToken && hash.get("token_type") === "Bearer") {
+          window.history.replaceState(null, document.title, window.location.pathname + window.location.search);
+          fetch("https://discord.com/api/users/@me", {
+            headers: { Authorization: `Bearer ${discordToken}` }
+          })
+            .then((response) => response.ok ? response.json() : Promise.reject(response))
+            .then((user) => {
+              const displayName = user.global_name || user.username || "Discord Nutzer";
+              status.textContent = "Angemeldet";
+              message.textContent = "Discord Login erfolgreich.";
+              profileBox.hidden = false;
+              profileBox.innerHTML = `
+                <div class="label">Discord Konto</div>
+                <div class="value">${displayName}</div>
+                <div class="empty">@${user.username || "discord"}</div>
+              `;
+              localStorage.setItem("katzensmp-discord-user", JSON.stringify({
+                id: user.id,
+                username: user.username,
+                globalName: user.global_name || "",
+                savedAt: new Date().toISOString()
+              }));
+            })
+            .catch(() => {
+              status.textContent = "Fehler";
+              message.textContent = "Discord Login konnte nicht gelesen werden. Pruefe Redirect-URI und Client-ID.";
+            });
+        }
+
+        if (DISCORD_CLIENT_ID.includes("HIER_DEINE")) {
+          button.addEventListener("click", () => {
+            message.textContent = "Bitte zuerst deine Discord Client-ID in der index.html eintragen.";
+          });
+          return;
+        }
+
+        status.textContent = "Bereit";
+        button.addEventListener("click", () => {
+          const state = Math.random().toString(36).slice(2);
+          sessionStorage.setItem("discord-oauth-state", state);
+          const params = new URLSearchParams({
+            response_type: "token",
+            client_id: DISCORD_CLIENT_ID,
+            scope: "identify",
+            redirect_uri: DISCORD_REDIRECT_URI,
+            state
+          });
+          window.location.href = `https://discord.com/oauth2/authorize?${params.toString()}`;
         });
       }
       window.addEventListener("load", () => {
