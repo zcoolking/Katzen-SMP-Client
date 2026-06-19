@@ -1,10 +1,11 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="de">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#050812" />
     <title>KatzenSMP Client</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
       :root {
         color-scheme: dark;
@@ -122,6 +123,24 @@
         border-color: var(--line);
         color: var(--muted);
         opacity: 0.74;
+      }
+
+      .login-area {
+        display: grid;
+        gap: 14px;
+      }
+
+      .login-placeholder,
+      .profile-box {
+        border: 1px dashed rgba(38, 244, 255, 0.42);
+        border-radius: 8px;
+        color: var(--muted);
+        padding: 16px;
+      }
+
+      .profile-box {
+        border-style: solid;
+        background: rgba(38, 244, 255, 0.08);
       }
 
       main {
@@ -322,6 +341,7 @@
           <span>KatzenSMP Client</span>
         </a>
         <nav aria-label="Hauptnavigation">
+          <a href="#login">Google Login</a>
           <a href="#mod-download">Mod Download</a>
           <a href="#discord">Discord</a>
           <a href="#info">Info</a>
@@ -341,6 +361,7 @@
             Bereit fuer GitHub Pages, Netlify oder normalen Webspace.
           </p>
           <div class="actions">
+            <a class="button primary" href="#login">Google Login</a>
             <a class="button primary" href="#mod-download">Mod Download</a>
             <a class="button primary" href="#discord">Discord Server</a>
             <a class="button primary" href="#info">Mehr ansehen</a>
@@ -374,6 +395,29 @@
         </aside>
       </section>
 
+
+      <section id="login">
+        <div class="section-title">
+          <h2>Google Login</h2>
+          <p>Melde dich mit deinem Google-Konto an. Fuer den echten Login muss noch eine Google OAuth Client-ID eingetragen werden.</p>
+        </div>
+        <div class="console">
+          <div class="console-inner login-area">
+            <div class="status-row">
+              <div>
+                <div class="label">Status</div>
+                <div class="value" id="loginStatus">Client-ID fehlt</div>
+              </div>
+              <span class="pill">Google</span>
+            </div>
+            <div id="googleButton"></div>
+            <div id="loginPlaceholder" class="login-placeholder">
+              Google Login ist vorbereitet. Trage in der Datei deine Google Client-ID ein, dann erscheint hier der echte Login-Button.
+            </div>
+            <div id="profileBox" class="profile-box" hidden></div>
+          </div>
+        </div>
+      </section>
       <section id="mod-download">
         <div class="section-title">
           <h2>Mod Download</h2>
@@ -502,5 +546,44 @@
     <footer>
       <div class="shell">© KatzenSMP Client - statische Website</div>
     </footer>
-  </body>
+    <script>
+      const GOOGLE_CLIENT_ID = "937338779986-f9lnnv0hdt39v3cn5odud6flbpu1r66n.apps.googleusercontent.com";
+
+      function decodeJwtPayload(token) {
+        const payload = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+        return JSON.parse(decodeURIComponent(atob(payload).split("").map((char) => {
+          return "%" + ("00" + char.charCodeAt(0).toString(16)).slice(-2);
+        }).join("")));
+      }
+
+      function handleGoogleCredential(response) {
+        const profile = decodeJwtPayload(response.credential);
+        document.getElementById("loginStatus").textContent = "Angemeldet";
+        document.getElementById("profileBox").hidden = false;
+        document.getElementById("profileBox").innerHTML = `
+          <div class="label">Google Konto</div>
+          <div class="value">${profile.name || "Angemeldet"}</div>
+          <div class="empty">${profile.email || ""}</div>
+        `;
+      }
+
+      window.addEventListener("load", () => {
+        if (!window.google || GOOGLE_CLIENT_ID.includes("HIER_DEINE")) {
+          return;
+        }
+
+        document.getElementById("loginStatus").textContent = "Bereit";
+        document.getElementById("loginPlaceholder").hidden = true;
+        google.accounts.id.initialize({
+          client_id: GOOGLE_CLIENT_ID,
+          callback: handleGoogleCredential
+        });
+        google.accounts.id.renderButton(document.getElementById("googleButton"), {
+          theme: "outline",
+          size: "large",
+          shape: "rectangular",
+          text: "signin_with"
+        });
+      });
+    </script>  </body>
 </html>
